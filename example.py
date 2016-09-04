@@ -60,8 +60,6 @@ for error in h:
 	print error
 """
 
-
-
 """
 Model Based
 """
