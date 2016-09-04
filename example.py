@@ -4,6 +4,7 @@ from loaders.csv_loader import CSVLoader
 from error_detectors.ErrorDetector import ErrorDetector
 from model_based.SafeSetFilter import SafeSetFilter
 from model_based.HardFilter import HardFilter
+from error_detectors.QuantitativeErrorModule import QuantitativeErrorModule
 import numpy as np
 
 """
@@ -19,13 +20,30 @@ e.fit()
 
 for error in e:
 	print error
+"""
+
+
 
 """
+Model Free (Just Quantitative)
+"""
+"""
+c = CSVLoader()
+loadedData = c.loadFile('datasets/adult.data')
+
+e = ErrorDetector(loadedData, modules=[QuantitativeErrorModule], config=[{'thresh': 10}])
+
+e.fit()
+
+for error in e:
+	print error
+"""
+
 
 """
 Model Based 1
 """
-
+"""
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 
@@ -40,14 +58,14 @@ h.fit()
 
 for error in h:
 	print error
+"""
 
-exit()
 
 
 """
 Model Based
 """
-
+"""
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 
@@ -65,6 +83,7 @@ h.fit()
 
 for error in h:
 	print error
+"""
 
 
 
