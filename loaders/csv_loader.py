@@ -70,7 +70,7 @@ class CSVLoader:
 
 		#print [(s[0],s[1]) for s in scored_parses]
 
-		return scored_parses[0]
+		return scored_parses[0][2]
 
 
 

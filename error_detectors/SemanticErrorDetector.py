@@ -9,12 +9,14 @@ import re
 
 class SemanticErrorDetector:
 
-	def __init__(self, corpus='corpora/text8', thresh=3.5):
+	def __init__(self, corpus='corpora/text8', thresh=3.5, fail_thresh=0.8):
 		sentences = word2vec.Text8Corpus(corpus)
 		
 		self.model = word2vec.Word2Vec(sentences)
 
 		self.thresh = thresh
+
+		self.fail_thresh = fail_thresh
 
 
 	"""
@@ -28,6 +30,7 @@ class SemanticErrorDetector:
 	def predict(self, domain):
 		error = []
 		incorpus = []
+		full_corpus = []
 		
 		#for each val in the domain
 		for d in domain:
@@ -45,12 +48,17 @@ class SemanticErrorDetector:
 				for t in tokens:
 					if t in self.model:
 						incorpus.append(t)
+						full_corpus.append(t)
 						match = True
 
 				#if no matches error
 				if not match:
 					error.append(d)
 
+
+		#if there are too few matches just return
+		if (len(error)+0.0)/len(domain) > self.fail_thresh:
+			return [], full_corpus
 
 
 		#build similarity graph, take in-degree
@@ -65,7 +73,6 @@ class SemanticErrorDetector:
 			vals.append(agg)
 
 
-
 		#take MAD to filter corpus
 		mad = self.mad(vals)
 		median = np.median(vals)
@@ -74,6 +81,8 @@ class SemanticErrorDetector:
 			if np.abs(aggsim[a] - median) > self.thresh*mad:
 				error.append(a)
 				incorpus.remove(a)
+
+
 
 		#return error and incorpus
 		return error, incorpus
