@@ -7,7 +7,7 @@ ActiveDetect provides a composable library for error detection tailored for Mach
 The basic unit of an ActiveDetect program is an ErrorModule. An ErrorModule is a class that defines a *record independent* error detection operation on a single column. That is given a list of values from the column, in any order, it will achieve the same result. ErrorModules define the following methods:
 
 ```
-def predict(self, vals):
+	def predict(self, vals):
 	"""
 	Takes is a list of values and outputs two sets: error set of values, and normal set of values
 	"""

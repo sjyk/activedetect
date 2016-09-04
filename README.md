@@ -22,9 +22,9 @@ from loaders.csv_loader import CSVLoader
 loadedData = c.loadFile('datasets/adult.data')
 ```
 
-Then, we can run the EnsembleErrorDetector, this error detector test all possible errors in a dataset (so it's slow!):
+Then, we can run the ErrorDetector, this error detector test all possible errors in a dataset (so it's slow!):
 ```
-detector = EnsembleErrorDetector(loadedData)
+detector = ErrorDetector(loadedData)
 detector.fit()
 ```
 
@@ -51,9 +51,9 @@ import pickle
 m = pickle.load(open('datasets/adult-rl-misp.p','rb'))
 ```
 
-Next, create an EnsembleErrorDetector as before, but don't run fit:
+Next, create an ErrorDetector as before, but don't run fit:
 ```
-e = EnsembleErrorDetector(loadedData)
+e = ErrorDetector(loadedData)
 ```
 
 Let us apply the simplest model-based filter, restricting the errors to only mispredictions:

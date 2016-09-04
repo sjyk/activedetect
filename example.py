@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from loaders.csv_loader import CSVLoader
-from error_detectors.EnsembleErrorDetector import EnsembleErrorDetector
+from error_detectors.ErrorDetector import ErrorDetector
 from model_based.SafeSetFilter import SafeSetFilter
 from model_based.HardFilter import HardFilter
 import numpy as np
@@ -13,7 +13,7 @@ Model Free
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 
-e = EnsembleErrorDetector(loadedData)
+e = ErrorDetector(loadedData)
 
 e.fit()
 
@@ -29,7 +29,7 @@ Model Based 1
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 
-e = EnsembleErrorDetector(loadedData)
+e = ErrorDetector(loadedData)
 
 import pickle
 m = pickle.load(open('datasets/adult-rl-misp.p','rb'))
@@ -51,7 +51,7 @@ Model Based
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 
-e = EnsembleErrorDetector(loadedData)
+e = ErrorDetector(loadedData)
 
 import pickle
 m = pickle.load(open('datasets/adult-rl-misp.p','rb'))

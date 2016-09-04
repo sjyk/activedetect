@@ -3,14 +3,13 @@ Given a dataset returns the cells that
 are possibly erroneous.
 """
 import numpy as np
-
 from loaders.type_inference import LoLTypeInference
 from StringSimilarityErrorModule import StringSimilarityErrorModule
 from QuantitativeErrorModule import QuantitativeErrorModule
 from SemanticErrorModule import SemanticErrorModule
 from DistributionErrorModule import DistributionErrorModule
 
-class EnsembleErrorDetector:
+class ErrorDetector:
 
 	def __init__(self, 
 				 dataset, 
