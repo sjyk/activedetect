@@ -3,15 +3,12 @@
 from loaders.csv_loader import CSVLoader
 from error_detectors.EnsembleErrorDetector import EnsembleErrorDetector
 from model_based.SafeSetFilter import SafeSetFilter
+from model_based.HardFilter import HardFilter
 import numpy as np
 
 """
-c = CSVLoader()
-loadedData = c.loadFile('datasets/nflplaybyplay2015.csv')
-t = LoLTypeInference()
-print t.getDataTypes(loadedData[2])
+Model Free
 """
-
 """
 c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
@@ -22,6 +19,33 @@ e.fit()
 
 for error in e:
 	print error
+
+"""
+
+"""
+Model Based 1
+"""
+
+c = CSVLoader()
+loadedData = c.loadFile('datasets/adult.data')
+
+e = EnsembleErrorDetector(loadedData)
+
+import pickle
+m = pickle.load(open('datasets/adult-rl-misp.p','rb'))
+
+h = HardFilter(e, m)
+
+h.fit()
+
+for error in h:
+	print error
+
+exit()
+
+
+"""
+Model Based
 """
 
 c = CSVLoader()

@@ -1,10 +1,11 @@
 """
 Detects Distribution Errors in a discrete distribution
-dataset using Median Absolute Deviation
+dataset using standard deviations
 """
 import numpy as np
+from ErrorModule import ErrorModule
 
-class DistributionErrorDetector:
+class DistributionErrorModule(ErrorModule):
 
 	def __init__(self, thresh=3.5, fail_thresh=2):
 		self.thresh = thresh
@@ -53,14 +54,6 @@ class DistributionErrorDetector:
 
 		return error, incorpus
 
-	""" Median Absolute Deviation: a "Robust" version of standard deviation.
-    Indices variabililty of the sample.
-    https://en.wikipedia.org/wiki/Median_absolute_deviation 
-    """
-	def mad(self, arr):
-		arr = np.ma.array(arr).compressed() # should be faster to not use masked arrays.
-		med = np.median(arr)
-		return np.median(np.abs(arr - med))
 		
 	"""
 	Turns an error set into a set of records
@@ -85,3 +78,13 @@ class DistributionErrorDetector:
 				erecords.append(d)
 
 		return erecords, indices
+
+	"""
+	Returns a description
+	"""
+	def desc(self):
+		return "A distinct value was found with a count of greater than > " + str(self.thresh) + " stds from the mean count"
+
+
+	def availTypes(self):
+		return ['numerical', 'categorical', 'string']

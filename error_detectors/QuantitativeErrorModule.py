@@ -3,8 +3,9 @@ Detects Quantitative Errors in a dataset using
 standard deviations
 """
 import numpy as np
+from ErrorModule import ErrorModule
 
-class QuantitativeErrorDetector:
+class QuantitativeErrorModule(ErrorModule):
 
 	def __init__(self, thresh=3.5):
 		self.thresh = thresh
@@ -65,3 +66,15 @@ class QuantitativeErrorDetector:
 				erecords.append(d)
 
 		return erecords, indices
+
+	"""
+	Returns a description
+	"""
+	def desc(self):
+		return "A numerical value was found with a value of greater than > "+ str(self.thresh) + " stds from the mean"
+
+	"""
+	Returns where it is applicable
+	"""
+	def availTypes(self):
+		return ['numerical']

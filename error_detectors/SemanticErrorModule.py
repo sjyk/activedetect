@@ -6,8 +6,9 @@ from gensim.models.word2vec import Word2Vec
 from gensim.models import word2vec
 import numpy as np
 import re
+from ErrorModule import ErrorModule
 
-class SemanticErrorDetector:
+class SemanticErrorModule(ErrorModule):
 
 	def __init__(self, corpus='corpora/text8', thresh=3.5, fail_thresh=0.8):
 		sentences = word2vec.Text8Corpus(corpus)
@@ -27,7 +28,10 @@ class SemanticErrorDetector:
 
 	O(N^2): N distinct values
 	"""
-	def predict(self, domain):
+	def predict(self, vals):
+		
+		domain = set(vals)
+
 		error = []
 		incorpus = []
 		full_corpus = []
@@ -125,6 +129,15 @@ class SemanticErrorDetector:
 				erecords.append(d)
 
 		return erecords, indices
+
+	"""
+	"""
+	def desc(self):
+		return "A value was found with an abnormal word2vec similarity score thresh= " + str(self.thresh)
+
+
+	def availTypes(self):
+		return ['categorical']
 
 
 

@@ -3,38 +3,58 @@ Given a dataset returns the cells that
 are possibly erroneous.
 """
 import numpy as np
-from DistributionErrorDetector import DistributionErrorDetector
+
 from loaders.type_inference import LoLTypeInference
-from StringSimilarityErrorDetector import StringSimilarityErrorDetector
-from QuantitativeErrorDetector import QuantitativeErrorDetector
-from SemanticErrorDetector import SemanticErrorDetector
+from StringSimilarityErrorModule import StringSimilarityErrorModule
+from QuantitativeErrorModule import QuantitativeErrorModule
+from SemanticErrorModule import SemanticErrorModule
+from DistributionErrorModule import DistributionErrorModule
 
 class EnsembleErrorDetector:
 
 	def __init__(self, 
 				 dataset, 
-				 cat_thresh=10, 
-				 num_thresh=10, 
-				 dist_thresh=20,
-				 string_thresh=10,
-				 corpus='corpora/text8'):		
+				 cols = None,
+				 modules = [],
+				 config =  []):	
 
-		self.types = LoLTypeInference().getDataTypes(dataset)
-		self.cat_thresh = cat_thresh
-		self.num_thresh = num_thresh
-		self.string_thresh = string_thresh
-		self.dist_thresh = dist_thresh
+		if len(config) != len(modules):
+			raise ValueError("Config must be the same length as the modules list")
+
+		if len(modules) == 0:
+			self.default__init__(dataset, cols)
+			return
+
+		self.cols = cols
+
 		self.dataset = dataset
 
-		self.d_detect = DistributionErrorDetector(self.dist_thresh)
-		self.q_detect = QuantitativeErrorDetector(self.num_thresh)
-		self.s_detect = SemanticErrorDetector(corpus, self.num_thresh)
-		self.str_detect = None
+		self.types = LoLTypeInference().getDataTypes(dataset)
+
+		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
 		self.all_errors = [[[] for x in range(len(self.types))] for y in range(len(dataset))] 
+		
 		self.error_list = []
 
 		self.iterator = None
+
+
+	"""
+	default detectors and config
+	"""
+	def default__init__(self, dataset, cols):
+		d_detect = DistributionErrorModule
+		q_detect = QuantitativeErrorModule
+		s_detect = SemanticErrorModule
+		str_detect = StringSimilarityErrorModule
+		config = [{'thresh':20}, 
+				  {'thresh': 10}, 
+				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
+				  {'thresh': 10}]
+
+		return self.__init__(dataset, cols, [d_detect,q_detect, s_detect, str_detect], config)
+
 
 
 	"""
@@ -43,46 +63,13 @@ class EnsembleErrorDetector:
 	def __predictCol(self, col):
 		col_type = self.types[col]
 
-		if col_type == 'numerical':
-			vals = [r[col] for r in self.dataset]
-			
-			return {'quantitative': self.q_detect.getRecordSet(self.q_detect.predict(vals)[0], 
-		    								  self.dataset, 
-		    								  col),
+		error_dict = {}
+		for d in self.modules:
+			if col_type in d.availTypes():
+				vals = [r[col] for r in self.dataset]
+				error_dict[d.desc()] = d.getRecordSet(d.predict(vals)[0], self.dataset, col)
 
-					'distribution': self.d_detect.getRecordSet(self.d_detect.predict(vals)[0], 
-		    								  self.dataset, 
-		    								  col)}
-
-		elif col_type == 'string':
-
-			vals = [r[col] for r in self.dataset]
-
-			self.str_detect = StringSimilarityErrorDetector(vals)
-
-			return {'string': self.str_detect.getRecordSet(self.str_detect.predict(vals)[0], 
-		    								  self.dataset, 
-		    								  col),
-			
-					'distribution': self.d_detect.getRecordSet(self.d_detect.predict(vals)[0], 
-		    								  self.dataset, 
-		    								  col)}
-
-		elif col_type == 'categorical':
-
-			vals = [r[col] for r in self.dataset]
-
-			return  {'semantic': self.s_detect.getRecordSet(self.s_detect.predict(set(vals))[0], 
-		    								  self.dataset, 
-		    								  col),
-			
-					'distribution': self.d_detect.getRecordSet(self.d_detect.predict(vals)[0], 
-		    								  self.dataset, 
-		    								  col)}
-		else:
-			#we aren't handling special cases yet
-			return None
-
+		return error_dict
 
 	"""
 	The main user facing method to get all of the errors
@@ -92,6 +79,10 @@ class EnsembleErrorDetector:
 			print "[Fitting Model]..."
 
 		for i,t in enumerate(self.types):
+
+			if  not self.cols == None and i not in self.cols:
+				continue 
+
 			output = self.__predictCol(i)
 			
 			if logging:

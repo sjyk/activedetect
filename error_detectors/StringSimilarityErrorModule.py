@@ -6,14 +6,13 @@ from gensim.models.word2vec import Word2Vec
 from gensim.models import word2vec
 import numpy as np
 import re
+from ErrorModule import ErrorModule
 
-class StringSimilarityErrorDetector:
+class StringSimilarityErrorModule(ErrorModule):
 
 
 	#takes in a list of words
-	def __init__(self, sentences, thresh=3.5):		
-		self.model = word2vec.Word2Vec(sentences,hs=1)
-
+	def __init__(self, thresh=3.5):		
 		self.thresh = thresh
 
 
@@ -26,6 +25,9 @@ class StringSimilarityErrorDetector:
 	O(N^2): N distinct values
 	"""
 	def predict(self, strings):
+		
+		self.model = word2vec.Word2Vec(strings,hs=1)
+
 		error = []
 		incorpus = []
 
@@ -88,7 +90,12 @@ class StringSimilarityErrorDetector:
 				
 		return erecords, indices
 
+	def desc(self):
+		return "A string was found that was not well predicted by a sequential module thresh= " + str(self.thresh)
 
+
+	def availTypes(self):
+		return ['string']
 
 
 
