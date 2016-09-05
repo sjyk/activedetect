@@ -24,6 +24,9 @@ class ErrorDetector:
 			self.default__init__(dataset, cols)
 			return
 
+		self.modules = modules
+		self.config = config
+
 		self.cols = cols
 
 		self.dataset = dataset
@@ -38,6 +41,12 @@ class ErrorDetector:
 
 		self.iterator = None
 
+
+	"""
+	Adds a logger to the error detector
+	"""
+	def addLogger(self, logger):
+		self.logger = logger
 
 	"""
 	default detectors and config
@@ -73,9 +82,13 @@ class ErrorDetector:
 	"""
 	The main user facing method to get all of the errors
 	"""
-	def fit(self, logging=True):
-		if logging:
-			print "[Fitting Model]..."
+	def fit(self):
+		
+		#log schema, config, file type
+		if self.logger != None:
+			self.logger.logSchema(self.types)
+			self.logger.logFileType(len(self.dataset), len(self.types))
+			self.logger.logConfig(self.modules, self.config)
 
 		for i,t in enumerate(self.types):
 
@@ -83,14 +96,14 @@ class ErrorDetector:
 				continue 
 
 			output = self.__predictCol(i)
-			
-			if logging:
-				print "[Fitting Model], column: ", i, t
 
 			for k in output:
 				for index in output[k][1]:
 					self.all_errors[index][i].append(k)
 					self.error_list.append((index, i))
+					
+					if self.logger != None:
+						self.logger.logError(self.errorToDict((index, i)))
 
 		self.iterator = self.error_list.__iter__()
 		
@@ -101,13 +114,16 @@ class ErrorDetector:
 	def __iter__(self):
 		return self
 
-	#gets the next error
-	def next(self):
-		v = self.iterator.next()
+	def errorToDict(self, v):
 		return {'cell': v, 
 				'error_types':self.all_errors[v[0]][v[1]],
 				'cell_value': self.dataset[v[0]][v[1]],
 				'record_value': self.dataset[v[0]]}
+
+	#gets the next error
+	def next(self):
+		v = self.iterator.next()
+		return self.errorToDict(v)
 
 
 

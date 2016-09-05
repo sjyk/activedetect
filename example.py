@@ -3,6 +3,7 @@
 from loaders.csv_loader import CSVLoader
 from error_detectors.ErrorDetector import ErrorDetector
 from model_based.SafeSetFilter import SafeSetFilter
+from reporting.CSVLogging import CSVLogging
 from model_based.HardFilter import HardFilter
 from error_detectors.QuantitativeErrorModule import QuantitativeErrorModule
 import numpy as np
@@ -16,11 +17,14 @@ loadedData = c.loadFile('datasets/adult.data')
 
 e = ErrorDetector(loadedData)
 
+e.addLogger(CSVLogging("log.csv"))
+
 e.fit()
 
 for error in e:
 	print error
 """
+
 
 
 
