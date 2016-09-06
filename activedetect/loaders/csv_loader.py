@@ -70,6 +70,8 @@ class CSVLoader:
 
 		#print [(s[0],s[1]) for s in scored_parses]
 
+		self.delim = scored_parses[0][1]
+
 		return scored_parses[0][2]
 
 
