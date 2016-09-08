@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
   name = 'activedetect',
   packages = find_packages(), # this must be the same as the name above
-  version = '0.1.1',
+  version = '0.1.2',
   description = 'A Library For Error Detection For Predictive Analytics',
   author = 'Sanjay Krishnan and Eugene Wu',
   author_email = 'sanjay@eecs.berkeley.edu',
