@@ -53,6 +53,7 @@ We provide a number of example datasets to test the code, one interesting datase
 ```
 from activedetect.loaders.csv_loader import CSVLoader
 
+c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 ```
 
