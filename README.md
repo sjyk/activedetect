@@ -57,10 +57,14 @@ c = CSVLoader()
 loadedData = c.loadFile('datasets/adult.data')
 ```
 
-Then, we can run the ErrorDetector, this error detector test all possible errors in a dataset (so it's slow!):
+Then, we can run the ErrorDetector, this error detector test all possible errors in a dataset (so it's slow!).  
+Note that you can add a logger to any detector to start logging.  Currently we've implemented a CSV logger that logs everything.
+You can disable certain types of logged information by subclassing the CSVLogging class and and replacing logging functions with noops.
 ```
 from activedetect.error_detectors.ErrorDetector import ErrorDetector
+from reporting.CSVLogging import CSVLogging
 detector = ErrorDetector(loadedData)
+detector.addLogger(CSVLogging("log.csv"))
 detector.fit()
 ```
 
