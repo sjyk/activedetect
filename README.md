@@ -10,6 +10,40 @@ For Python 2.7, install the following dependencies
 * usaddress
 * sklearn
 
+First, make a new directory:
+```
+mkdir activedetect
+cd activedetect
+```
+
+Then, create a virtualenv:
+```
+virtualenv venv
+source venv/bin/activate
+```
+
+Install the PyPi package:
+```
+pip install activedetect
+```
+
+Now, add the corpora and example datasets
+```
+mkdir datasets
+cd datasets
+wget https://raw.githubusercontent.com/sjyk/activedetect/master/datasets/adult.data
+wget https://raw.githubusercontent.com/sjyk/activedetect/master/datasets/adult-rl-misp.p
+
+cd ..
+mkdir corpora
+https://raw.githubusercontent.com/sjyk/activedetect/master/corpora/text8
+```
+
+Move up one directory (to make the example paths work out)
+```
+cd ..
+```
+
 ## Example Run
 
 ### Model-Free
@@ -17,13 +51,14 @@ The first use case of ActiveDetect is *model-free* detection, i.e., find errors 
 We provide a number of example datasets to test the code, one interesting dataset is a U.S Census dataset with demographic information about residents. This demographic information has several missing values, and we will use ActiveDetect to find the errors.
 
 ```
-from loaders.csv_loader import CSVLoader
+from activedetect.loaders.csv_loader import CSVLoader
 
 loadedData = c.loadFile('datasets/adult.data')
 ```
 
 Then, we can run the ErrorDetector, this error detector test all possible errors in a dataset (so it's slow!):
 ```
+from activedetect.error_detectors.ErrorDetector import ErrorDetector
 detector = ErrorDetector(loadedData)
 detector.fit()
 ```
@@ -58,7 +93,7 @@ e = ErrorDetector(loadedData)
 
 Let us apply the simplest model-based filter, restricting the errors to only mispredictions:
 ```
-from model_based.HardFilter import HardFilter
+from activedetect.model_based.HardFilter import HardFilter
 filter = HardFilter(e, m)
 filter.fit()
 ```
@@ -77,7 +112,7 @@ labels = np.array([int('<' in d[-1]) for d in loadedData]) #turns label into a b
 
 Then, we can apply the SafeSetFilter
 ```
-from model_based.SafeSetFilter import SafeSetFilter
+from activedetect.model_based.SafeSetFilter import SafeSetFilter
 filter = SafeSetFilter(e, m, unlabeleddataset, labels)
 filter.fit()
 for error in filter:
