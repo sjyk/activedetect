@@ -41,6 +41,8 @@ class ErrorDetector:
 
 		self.iterator = None
 
+		self.logger = None
+
 
 	"""
 	Adds a logger to the error detector
