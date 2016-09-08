@@ -1,7 +1,7 @@
 
 from preprocessing_utils import *
 from model_eval_utils import *
-from loaders.type_inference import LoLTypeInference
+from activedetect.loaders.type_inference import LoLTypeInference
 
 
 """
