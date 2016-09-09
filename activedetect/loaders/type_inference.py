@@ -85,8 +85,8 @@ class LoLTypeInference:
 		addr_count = 0.0
 		for datum in data:
 			try:
-				vals = usaddress.parse(datum)
-				addrstrings = [v for v in vals if v[1] == 'Recipient']
+				vals = usaddress.parse(datum[col])
+				addrstrings = [v for v in vals if v[1] == 'Recipient' or v[1] == 'OccupancyIdentifier']
 				if len(addrstrings) != len(vals):
 					addr_count = addr_count + 1.0
 			except:
