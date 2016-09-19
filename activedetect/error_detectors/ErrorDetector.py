@@ -8,6 +8,7 @@ from StringSimilarityErrorModule import StringSimilarityErrorModule
 from QuantitativeErrorModule import QuantitativeErrorModule
 from SemanticErrorModule import SemanticErrorModule
 from DistributionErrorModule import DistributionErrorModule
+from CharSimilarityErrorModule import CharSimilarityErrorModule
 
 class ErrorDetector:
 
@@ -58,12 +59,15 @@ class ErrorDetector:
 		q_detect = QuantitativeErrorModule
 		s_detect = SemanticErrorModule
 		str_detect = StringSimilarityErrorModule
+		char_detect = CharSimilarityErrorModule
+
 		config = [{'thresh':20}, 
 				  {'thresh': 10}, 
 				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
+				  {'thresh': 10},
 				  {'thresh': 10}]
 
-		return self.__init__(dataset, cols, [d_detect,q_detect, s_detect, str_detect], config)
+		return self.__init__(dataset, cols, [d_detect,q_detect, s_detect, str_detect, char_detect], config)
 
 
 
