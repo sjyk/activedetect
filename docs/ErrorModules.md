@@ -60,3 +60,9 @@ Will detect both quantitative parsing failures as well as abnormal values
 thresh=#a std threshold to determine when the value differs more than x of the mean def=3.5, 
 ```
 
+### CharSimilarityErrorModule ###
+The CharSimilarityErrorModule detects values that do not belong in a string-valued column. It fine tunes Word2Vec on the given set of data, and then tries to predict a likelihood of occurance--but uses chars instead of words. Its parameters are:
+```
+thresh=#a std threshold to determine when the value differs more than x of the mean def=3.5, 
+```
+
