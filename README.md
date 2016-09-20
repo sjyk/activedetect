@@ -73,7 +73,6 @@ To get all of the errors, we provide an iterator interface:
 for error in detector:
 	print error
 ```
-Now there are only 23 remaining errors.
 
 Errors will look like this:
 ```
