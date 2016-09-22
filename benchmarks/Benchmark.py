@@ -45,12 +45,12 @@ class Benchmark():
 		fn = len([fn for fn in gt if fn not in s2])
 		return (tp/(tp + fp), tp/(tp+fn))
 
-	def saveResults(self):
+	def getResults(self):
 		dataset = self.getDataset()
 		gt = self._groundTruth(dataset)
 		quantitative = self._quantitative(dataset)
 		ad = self._ad(dataset)
-		print self.pr(gt, ad), self.pr(gt, quantitative)
+		return [self.pr(gt, ad), self.pr(gt, quantitative)]
 
 
 
