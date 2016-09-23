@@ -21,18 +21,19 @@ class QuantitativeErrorModule(ErrorModule):
 
 		std = np.std(vals)
 		mean = np.mean(vals)
+
+		vset = set(vals)
 		
 		#make a copy
-		incorpus = []
-		error = []
-		incorpus.extend(vals)
+		incorpus = set().union(vset)
+		error = set()
 
-		for a in vals:
+		for a in vset:
 			if np.abs(a - mean) > self.thresh*std:
-				error.append(a)
+				error.add(a)
 				incorpus.remove(a)
 
-		return error, incorpus
+		return list(error), list(incorpus)
 
 
 	def tryParse(self, num):
@@ -50,18 +51,12 @@ class QuantitativeErrorModule(ErrorModule):
 		indices = []
 		erecords = []
 
+		eset = set(errors)
+
 		for i,d in enumerate(dataset):
 			val = self.tryParse(d[col])
 
-			match = False
-
-			for e in errors:
-
-				if e == val:
-					match = True
-
-			#match or can't parse
-			if match or np.isinf(val):
+			if val in eset or np.isinf(val):
 				indices.append(i)
 				erecords.append(d)
 

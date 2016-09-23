@@ -6,6 +6,7 @@ from activedetect.error_detectors.QuantitativeErrorModule import QuantitativeErr
 from activedetect.error_detectors.SemanticErrorModule import SemanticErrorModule
 from activedetect.error_detectors.DistributionErrorModule import DistributionErrorModule
 from activedetect.error_detectors.CharSimilarityErrorModule import CharSimilarityErrorModule
+from activedetect.error_detectors.PuncErrorModule import PuncErrorModule
 
 from Benchmark import Benchmark
 
@@ -19,19 +20,19 @@ class LABenchmark(Benchmark):
 		return [{'thresh': 10}]
 
 	def getADConfig(self):
-		d_detect = DistributionErrorModule
 		q_detect = QuantitativeErrorModule
 		s_detect = SemanticErrorModule
 		str_detect = StringSimilarityErrorModule
 		char_detect = CharSimilarityErrorModule
+		punc_detect = PuncErrorModule
 
-		config = [{'thresh':20}, 
-				  {'thresh': 10}, 
+		config = [{'thresh': 10}, 
 				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
 				  {'thresh': 10},
-				  {'thresh': 10}]
+				  {'thresh': 10},
+				  {}]
 
-		return ([d_detect,q_detect, s_detect, str_detect, char_detect], config)
+		return ([q_detect, s_detect, str_detect, char_detect, punc_detect], config)
 
 	def _groundTruth(self, dataset):
 		return set([i for i,l in enumerate(dataset) if '000000' in l[48] or \

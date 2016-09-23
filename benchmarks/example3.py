@@ -4,17 +4,23 @@ from USCensusBenchmark import USCensusBenchmark
 from NFLBenchmark import NFLBenchmark
 from LABenchmark import LABenchmark
 from BPBenchmark import BPBenchmark
+from RetailBenchmark import RetailBenchmark
 
 """
 u = USCensusBenchmark()
-u.saveResults()
+print u.getResults()
+"""
 
 n = NFLBenchmark()
-n.saveResults()
+print n.getResults()
 
-l = LABenchmark()
-l.saveResults()
 """
+l = LABenchmark()
+print l.getResults()
 
 b = BPBenchmark()
 print b.getResults()
+
+r = RetailBenchmark()
+print r.getResults()
+"""

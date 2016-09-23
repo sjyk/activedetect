@@ -54,7 +54,7 @@ class CharSimilarityErrorModule(ErrorModule):
 		mad = np.std(string_scores)
 		median = np.mean(string_scores)
 
-		print scoredict, median, mad
+		#print scoredict, median, mad
 
 		for s in scoredict:
 			if np.abs(scoredict[s] - median) > self.thresh*mad:

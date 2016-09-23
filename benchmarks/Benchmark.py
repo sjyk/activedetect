@@ -47,9 +47,13 @@ class Benchmark():
 
 	def getResults(self):
 		dataset = self.getDataset()
+
 		gt = self._groundTruth(dataset)
+
 		quantitative = self._quantitative(dataset)
+
 		ad = self._ad(dataset)
+
 		return [self.pr(gt, ad), self.pr(gt, quantitative)]
 
 

@@ -7,8 +7,8 @@ from activedetect.loaders.type_inference import LoLTypeInference
 from StringSimilarityErrorModule import StringSimilarityErrorModule
 from QuantitativeErrorModule import QuantitativeErrorModule
 from SemanticErrorModule import SemanticErrorModule
-from DistributionErrorModule import DistributionErrorModule
 from CharSimilarityErrorModule import CharSimilarityErrorModule
+from PuncErrorModule import PuncErrorModule
 
 class ErrorDetector:
 
@@ -55,19 +55,19 @@ class ErrorDetector:
 	default detectors and config
 	"""
 	def default__init__(self, dataset, cols):
-		d_detect = DistributionErrorModule
 		q_detect = QuantitativeErrorModule
 		s_detect = SemanticErrorModule
 		str_detect = StringSimilarityErrorModule
 		char_detect = CharSimilarityErrorModule
+		punc_detect = PuncErrorModule
 
-		config = [{'thresh':20}, 
-				  {'thresh': 10}, 
+		config = [{'thresh': 10}, 
 				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
 				  {'thresh': 10},
-				  {'thresh': 10}]
+				  {'thresh': 10},
+				  {}]
 
-		return self.__init__(dataset, cols, [d_detect,q_detect, s_detect, str_detect, char_detect], config)
+		return self.__init__(dataset, cols, [q_detect, s_detect, str_detect, char_detect, punc_detect], config)
 
 
 
@@ -78,9 +78,11 @@ class ErrorDetector:
 		col_type = self.types[col]
 
 		error_dict = {}
+
 		for d in self.modules:
 			if col_type in d.availTypes():
 				vals = [r[col] for r in self.dataset]
+
 				error_dict[d.desc()] = d.getRecordSet(d.predict(vals)[0], self.dataset, col)
 
 		return error_dict

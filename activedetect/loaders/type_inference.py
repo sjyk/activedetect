@@ -1,5 +1,4 @@
 import numpy as np
-import usaddress
 
 class LoLTypeInference:
 	"""
@@ -32,9 +31,9 @@ class LoLTypeInference:
 
 		for i in range(0, num_attributes):
 
-			if self.__is_addr(data, i):
-				type_array.append('address')
-			elif self.__is_num(data, i):
+			#if self.__is_addr(data, i):
+			#	type_array.append('address')
+			if self.__is_num(data, i):
 				type_array.append('numerical')
 			elif self.__is_cat(data, i):
 				type_array.append('categorical')
@@ -77,20 +76,4 @@ class LoLTypeInference:
 
 		return (total/len(counts) > self.cat_thresh)
 
-
-	def __is_addr(self, data, col):
-		"""
-		Internal method to determine whether the column is an address
-		"""
-		addr_count = 0.0
-		for datum in data:
-			try:
-				vals = usaddress.parse(datum[col])
-				addrstrings = [v for v in vals if v[1] == 'Recipient' or v[1] == 'OccupancyIdentifier']
-				if len(addrstrings) != len(vals):
-					addr_count = addr_count + 1.0
-			except:
-				pass
-
-		return (addr_count/len(data) > self.addr_thresh)
 
