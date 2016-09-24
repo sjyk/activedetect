@@ -28,11 +28,8 @@ class StringSimilarityErrorModule(ErrorModule):
 		
 		self.model = word2vec.Word2Vec(strings,hs=1)
 
-		error = []
-		incorpus = []
-
-		incorpus = strings
-		error = []
+		incorpus = set(strings)
+		error = set()
 		
 		#for each val in the column
 		string_scores = []
@@ -43,7 +40,7 @@ class StringSimilarityErrorModule(ErrorModule):
 			cleaned_string = s.lower().strip()
 
 			if len(cleaned_string) == 0:
-				error.append(s)
+				error.add(s)
 				incorpus.remove(s)
 			else:
 				score = np.squeeze(self.model.score([cleaned_string]))/len(cleaned_string)
@@ -55,7 +52,7 @@ class StringSimilarityErrorModule(ErrorModule):
 
 		for s in scoredict:
 			if np.abs(scoredict[s] - median) > self.thresh*mad:
-				error.append(s)
+				error.add(s)
 				incorpus.remove(s)
 
 		return error, incorpus

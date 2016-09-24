@@ -32,9 +32,9 @@ class SemanticErrorModule(ErrorModule):
 		
 		domain = set(vals)
 
-		error = []
-		incorpus = []
-		full_corpus = []
+		error = set()
+		incorpus = set()
+		full_corpus = set()
 		
 		#for each val in the domain
 		for d in domain:
@@ -44,20 +44,21 @@ class SemanticErrorModule(ErrorModule):
 
 			#if no tokens error
 			if len(tokens) == 0:
-				error.append(d)
+				error.add(d)
 			else:
 
 				#iterate through tokens add to corpus
 				match = False
 				for t in tokens:
 					if t in self.model:
-						incorpus.append(t)
-						full_corpus.append(t)
+						incorpus.add(t)
+						full_corpus.add(t)
 						match = True
+						break
 
 				#if no matches error
 				if not match:
-					error.append(d)
+					error.add(d)
 
 
 		#if there are too few matches just return
@@ -83,13 +84,11 @@ class SemanticErrorModule(ErrorModule):
 
 		for a in aggsim:
 			if np.abs(aggsim[a] - median) > self.thresh*mad:
-				error.append(a)
+				error.add(a)
 				incorpus.remove(a)
 
-
-
 		#return error and incorpus
-		return error, incorpus
+		return list(error), list(incorpus)
 		
 
 

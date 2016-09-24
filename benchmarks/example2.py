@@ -27,7 +27,7 @@ for error in e:
 """
 
 c = CSVLoader()
-loadedData = c.loadFile('datasets/ipums.la.99')
+loadedData = c.loadFile('datasets/sensor.csv')
 
 e = ErrorDetector(loadedData)
 

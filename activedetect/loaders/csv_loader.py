@@ -42,10 +42,11 @@ class CSVLoader:
 		This method assigns a score to all of the parsed files.
 		We count the variance in the row length
 		"""
-		rowstd = np.std([len(row) for row in parsed_file])
+		lstcount = [len([r for r in row if r.strip() != '']) for row in parsed_file]
+		rowstd = np.std(lstcount)
 
 		#catch degenerate case
-		if rowstd == 0 and len(parsed_file[0]) == 1:
+		if len(parsed_file[0]) == 1:
 			return float("inf")
 		else:
 			return rowstd
@@ -66,13 +67,16 @@ class CSVLoader:
 
 		#score each of the parsed files
 		scored_parses = [(self.__score(p[1]), p[0], p[1]) for p in parsed_files]
-		scored_parses.sort()
 
-		#print [(s[0],s[1]) for s in scored_parses]
+		scored_parses.sort()
 
 		self.delim = scored_parses[0][1]
 
-		return scored_parses[0][2]
+		#worst case just split on spaces
+		if len(scored_parses[0][2][0]) == 1:
+			return self.__load(fname, ' ', '"')
+		else:
+			return scored_parses[0][2]
 
 
 
