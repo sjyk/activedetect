@@ -6,7 +6,7 @@ class LoLTypeInference:
 	each of the attributes.
 	"""
 
-	def __init__(self, cat_thresh=0.25, 
+	def __init__(self, cat_thresh=1000, 
 					   num_thresh = 0.25, 
 					   addr_thresh=0.25):
 		"""
@@ -74,6 +74,6 @@ class LoLTypeInference:
 
 		total = len([k for k in counts if counts[k] > 1])+0.0
 
-		return (total/len(counts) > self.cat_thresh)
+		return (total < self.cat_thresh)
 
 

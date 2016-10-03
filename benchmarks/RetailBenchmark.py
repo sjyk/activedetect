@@ -19,23 +19,6 @@ class RetailBenchmark(Benchmark):
 	def getQuantitativeConfig(self):
 		return [{'thresh': 10}]
 
-	def getADConfig(self):
-		q_detect = QuantitativeErrorModule
-		s_detect = SemanticErrorModule
-		str_detect = StringSimilarityErrorModule
-		char_detect = CharSimilarityErrorModule
-		punc_detect = PuncErrorModule
-
-
-
-		config = [{'thresh': 10}, 
-				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
-				  {'thresh': 10},
-				  {'thresh': 10},
-				  {}]
-
-		return ([q_detect, s_detect, str_detect, char_detect, punc_detect], config)
-
 		#return ([punc_detect], [{}])
 
 	def _groundTruth(self, dataset):

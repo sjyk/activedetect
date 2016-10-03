@@ -3,17 +3,27 @@ Detects Semantic Errors in A Dataset Using
 Word2Vec
 """
 from gensim.models.word2vec import Word2Vec
+from gensim.parsing.preprocessing import STOPWORDS
 from gensim.models import word2vec
 import numpy as np
 import re
 from ErrorModule import ErrorModule
+import os.path
 
 class SemanticErrorModule(ErrorModule):
 
 	def __init__(self, corpus='corpora/text8', thresh=3.5, fail_thresh=0.8):
-		sentences = word2vec.Text8Corpus(corpus)
 		
-		self.model = word2vec.Word2Vec(sentences)
+		#compiles the corpus first time
+		if os.path.isfile(corpus+'-pretrained.bin'):
+			self.model = Word2Vec.load(corpus+'-pretrained.bin')
+		else:
+			sentences = word2vec.LineSentence(corpus)
+			self.model = word2vec.Word2Vec(sentences)
+			self.model.save(corpus+'-pretrained.bin')
+
+
+		self.model.init_sims(replace=True)
 
 		self.thresh = thresh
 
@@ -34,13 +44,13 @@ class SemanticErrorModule(ErrorModule):
 
 		error = set()
 		incorpus = set()
-		full_corpus = set()
+		modeled_corpus = set()
 		
 		#for each val in the domain
 		for d in domain:
 
 			#tokenizes categorical attrs
-			tokens = re.findall(r"[\w']+", d)
+			tokens = [t.strip().lower() for t in re.findall(r"[\w']+", d)]
 
 			#if no tokens error
 			if len(tokens) == 0:
@@ -50,42 +60,50 @@ class SemanticErrorModule(ErrorModule):
 				#iterate through tokens add to corpus
 				match = False
 				for t in tokens:
-					if t in self.model:
+
+					if t not in STOPWORDS and t in self.model:
 						incorpus.add(t)
-						full_corpus.add(t)
+						modeled_corpus.add(t)
 						match = True
-						break
 
-				#if no matches error
+				#if no matches add it back to incorpus
 				if not match:
-					error.add(d)
-
-
-		#if there are too few matches just return
-		if (len(error)+0.0)/len(domain) > self.fail_thresh:
-			return [], full_corpus
-
+					incorpus.add(d)
 
 		#build similarity graph, take in-degree
+
+		#if len(modeled_corpus) > 0:
+		#	print self.model.doesnt_match(modeled_corpus)
+
 		aggsim = {}
 		vals = []
-		for i in incorpus:
-			agg = 0
-			for j in incorpus:
-				agg = agg + self.model.similarity(i,j)
+		for i in modeled_corpus:
+			
+			if i in self.model:
+				agg = 0
 
-			aggsim[i] = agg
-			vals.append(agg)
+				for j in modeled_corpus:
 
+					if j in self.model:
+						#print i, j
+						agg = agg + self.model.similarity(i,j)
+
+				aggsim[i] = agg
+				vals.append(agg)
 
 		#take MAD to filter corpus
 		mad = self.mad(vals)
 		median = np.median(vals)
 
 		for a in aggsim:
-			if np.abs(aggsim[a] - median) > self.thresh*mad:
+
+			#if a == 'b':
+			#	print aggsim[a], median, self.thresh*mad
+
+			if np.abs(median - aggsim[a]) > self.thresh*mad:
 				error.add(a)
 				incorpus.remove(a)
+				#print a, median, aggsim[a], mad, self.thresh
 
 		#return error and incorpus
 		return list(error), list(incorpus)
@@ -112,7 +130,7 @@ class SemanticErrorModule(ErrorModule):
 
 		for i,d in enumerate(dataset):
 			val = d[col]
-			tokens = set(re.findall(r"[\w']+", val))
+			tokens = [t.strip().lower() for t in re.findall(r"[\w']+", val)]
 
 			match = False
 

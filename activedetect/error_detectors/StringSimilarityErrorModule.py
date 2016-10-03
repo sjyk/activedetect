@@ -25,8 +25,9 @@ class StringSimilarityErrorModule(ErrorModule):
 	O(N^2): N distinct values
 	"""
 	def predict(self, strings):
+				
+		self.model = word2vec.Word2Vec([s.lower().split() for s in strings],hs=1)
 		
-		self.model = word2vec.Word2Vec(strings,hs=1)
 
 		incorpus = set(strings)
 		error = set()
@@ -37,7 +38,7 @@ class StringSimilarityErrorModule(ErrorModule):
 
 		for s in strings:
 
-			cleaned_string = s.lower().strip()
+			cleaned_string = s.lower().split()
 
 			if len(cleaned_string) == 0:
 				error.add(s)
@@ -51,7 +52,7 @@ class StringSimilarityErrorModule(ErrorModule):
 		median = np.mean(string_scores)
 
 		for s in scoredict:
-			if np.abs(scoredict[s] - median) > self.thresh*mad:
+			if median- scoredict[s] > self.thresh*mad:
 				error.add(s)
 				incorpus.remove(s)
 
@@ -74,14 +75,16 @@ class StringSimilarityErrorModule(ErrorModule):
 	"""
 	def getRecordSet(self, errors, dataset, col):
 
+		
 		indices = []
 		erecords = []
+		errorset = set(errors) 
 
 		for i,d in enumerate(dataset):
 
 			val = d[col]
 
-			if val in set(errors):
+			if val in errorset:
 				indices.append(i)
 				erecords.append(d)
 				

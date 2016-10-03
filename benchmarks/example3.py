@@ -7,18 +7,19 @@ from RetailBenchmark import RetailBenchmark
 from SensorBenchmark import SensorBenchmark
 
 
-u = USCensusBenchmark()
-print u.getResults()
+#u = USCensusBenchmark()
+#print u.getResults()
 
 n = NFLBenchmark()
 print n.getResults()
 
-b = BPBenchmark()
-print b.getResults()
+#b = BPBenchmark()
+#print b.getResults()
 
-r = RetailBenchmark()
-print r.getResults()
+#r = RetailBenchmark()
+#print r.getResults()
 
-s = SensorBenchmark()
-print s.getResults()
+#s = SensorBenchmark()
+#print s.getResults()
+
 

@@ -27,7 +27,7 @@ for error in e:
 """
 
 c = CSVLoader()
-loadedData = c.loadFile('datasets/sensor.csv')
+loadedData = c.loadFile('datasets/nflplaybyplay2015.csv')
 
 e = ErrorDetector(loadedData)
 
@@ -35,5 +35,6 @@ e.fit()
 
 for error in e:
 	print error
+
 
 

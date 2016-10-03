@@ -19,28 +19,9 @@ class NFLBenchmark(Benchmark):
 	def getQuantitativeConfig(self):
 		return [{'thresh': 10}]
 
-	def getADConfig(self):
-		q_detect = QuantitativeErrorModule
-		s_detect = SemanticErrorModule
-		str_detect = StringSimilarityErrorModule
-		char_detect = CharSimilarityErrorModule
-		punc_detect = PuncErrorModule
-
-		config = [{'thresh': 10}, 
-				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
-				  {'thresh': 10},
-				  {'thresh': 10},
-				  {}]
-
-		return ([q_detect, s_detect, str_detect, char_detect, punc_detect], config)
-
 	def _groundTruth(self, dataset):
-		return set([i for i,l in enumerate(dataset) if 'Timeout' in l[19] or \
-													   'END' in l[19] or \
-													   self._na_count(l) > 16 or \
-													   'Kickoff' in l[28] or \
-													   'Extra Point' in l[28] or \
-													   'Two-Minute' in l[19]])
+		return set([i for i,l in enumerate(dataset) if '' in l or \
+													   self._na_count(l) > 20])
 
 	def _na_count(self, l):
 		return len([c for c in l if 'NA' in c])

@@ -34,6 +34,8 @@ class ErrorDetector:
 
 		self.types = LoLTypeInference().getDataTypes(dataset)
 
+		#print self.types
+
 		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
 		self.all_errors = [[[] for x in range(len(self.types))] for y in range(len(dataset))] 
@@ -57,17 +59,13 @@ class ErrorDetector:
 	def default__init__(self, dataset, cols):
 		q_detect = QuantitativeErrorModule
 		s_detect = SemanticErrorModule
-		str_detect = StringSimilarityErrorModule
-		char_detect = CharSimilarityErrorModule
 		punc_detect = PuncErrorModule
 
 		config = [{'thresh': 10}, 
 				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
-				  {'thresh': 10},
-				  {'thresh': 10},
 				  {}]
 
-		return self.__init__(dataset, cols, [q_detect, s_detect, str_detect, char_detect, punc_detect], config)
+		return self.__init__(dataset, cols, [q_detect, s_detect, punc_detect], config)
 
 
 
@@ -103,7 +101,11 @@ class ErrorDetector:
 			if  not self.cols == None and i not in self.cols:
 				continue 
 
+			#start = datetime.datetime.now()
+
 			output = self.__predictCol(i)
+
+			#print i, t, datetime.datetime.now() - start
 
 			for k in output:
 				for index in output[k][1]:

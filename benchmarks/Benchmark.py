@@ -3,6 +3,11 @@
 from activedetect.loaders.csv_loader import CSVLoader
 from  activedetect.error_detectors.ErrorDetector import ErrorDetector
 from activedetect.error_detectors.QuantitativeErrorModule import QuantitativeErrorModule
+from activedetect.error_detectors.StringSimilarityErrorModule import StringSimilarityErrorModule
+from activedetect.error_detectors.QuantitativeErrorModule import QuantitativeErrorModule
+from activedetect.error_detectors.SemanticErrorModule import SemanticErrorModule
+from activedetect.error_detectors.CharSimilarityErrorModule import CharSimilarityErrorModule
+from activedetect.error_detectors.PuncErrorModule import PuncErrorModule
 import numpy as np
 import pickle
 
@@ -18,7 +23,15 @@ class Benchmark():
 		raise NotImplemented("Returns config for quantitative detection")
 
 	def getADConfig(self):
-		raise NotImplemented("Returns detectors, config for AD")
+		q_detect = QuantitativeErrorModule
+		s_detect = SemanticErrorModule
+		punc_detect = PuncErrorModule
+
+		config = [{'thresh': 10}, 
+				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
+				  {}]
+
+		return ([q_detect, s_detect, punc_detect], config)
 
 	def _groundTruth(self, dataset):
 		raise NotImplemented("Ground Truth Not Implemented")
@@ -36,6 +49,8 @@ class Benchmark():
 		
 		e = ErrorDetector(dataset, modules=config[0], config=config[1])
 		e.fit()
+
+		#print set([error['cell_value'] for error in e])
 
 		return set([error['cell'][0] for error in e])
 
