@@ -12,7 +12,7 @@ import os.path
 
 class SemanticErrorModule(ErrorModule):
 
-	def __init__(self, corpus='corpora/text8', thresh=3.5, fail_thresh=0.8):
+	def __init__(self, corpus='corpora/text8', thresh=3.5, fail_thresh=5):
 		
 		#compiles the corpus first time
 		if os.path.isfile(corpus+'-pretrained.bin'):
@@ -61,7 +61,9 @@ class SemanticErrorModule(ErrorModule):
 				match = False
 				for t in tokens:
 
-					if t not in STOPWORDS and t in self.model:
+					if t not in STOPWORDS and \
+					   len(t) > 3 and \
+					   t in self.model:
 						incorpus.add(t)
 						modeled_corpus.add(t)
 						match = True
@@ -69,11 +71,6 @@ class SemanticErrorModule(ErrorModule):
 				#if no matches add it back to incorpus
 				if not match:
 					incorpus.add(d)
-
-		#build similarity graph, take in-degree
-
-		#if len(modeled_corpus) > 0:
-		#	print self.model.doesnt_match(modeled_corpus)
 
 		aggsim = {}
 		vals = []
@@ -90,6 +87,12 @@ class SemanticErrorModule(ErrorModule):
 
 				aggsim[i] = agg
 				vals.append(agg)
+
+
+		#fail if the domain is too small to estimate
+		if len(modeled_corpus) < self.fail_thresh:
+			return list(error), list(incorpus)
+
 
 		#take MAD to filter corpus
 		mad = self.mad(vals)
