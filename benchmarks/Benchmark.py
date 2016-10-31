@@ -31,14 +31,12 @@ class Benchmark():
 
 	def getADConfig(self):
 		q_detect = QuantitativeErrorModule
-		s_detect = SemanticErrorModule
 		punc_detect = PuncErrorModule
 
-		config = [{'thresh': 10}, 
-				  {'thresh': 20, 'corpus': 'corpora/text8'}, 
+		config = [{'thresh': 10},  
 				  {}]
 
-		return ([q_detect, s_detect, punc_detect], config)
+		return ([q_detect, punc_detect], config)
 
 	def _groundTruth(self, dataset):
 		raise NotImplemented("Ground Truth Not Implemented")
