@@ -58,14 +58,12 @@ class ErrorDetector:
 	"""
 	def default__init__(self, dataset, cols):
 		q_detect = QuantitativeErrorModule
-		s_detect = SemanticErrorModule
 		punc_detect = PuncErrorModule
 
 		config = [{'thresh': 10}, 
-				  {'thresh': 10, 'corpus': 'corpora/text8'}, 
 				  {}]
 
-		return self.__init__(dataset, cols, [q_detect, s_detect, punc_detect], config)
+		return self.__init__(dataset, cols, [q_detect, punc_detect], config)
 
 
 

@@ -148,8 +148,8 @@ class Benchmark():
 		gt = self._groundTruth(dataset)
 
 		results['CQuantitative']  = self.runExperiment(dataset, self._quantitative, gt)
-		results['NMCD']  = self.runExperiment(dataset, self._naiveMCD, gt)
-		results['OCSVM']  = self.runExperiment(dataset, self._ocSVM, gt)
+		#results['NMCD']  = self.runExperiment(dataset, self._naiveMCD, gt)
+		#results['OCSVM']  = self.runExperiment(dataset, self._ocSVM, gt)
 		results['AD']  = self.runExperiment(dataset, self._ad, gt)
 		results['Missing']  = self.runExperiment(dataset, self._missing, gt)
 		results['ISOF']  = self.runExperiment(dataset, self._isoForest, gt)

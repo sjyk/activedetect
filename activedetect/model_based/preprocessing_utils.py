@@ -28,6 +28,10 @@ def tryParse(X):
 
 	return vals
 
+def tryParseList(Y):
+
+	return tryParse(np.array(Y))
+
 #converts the labeled dataset into features and labels
 def featurize(features_dataset, types):
 	feature_list = []
