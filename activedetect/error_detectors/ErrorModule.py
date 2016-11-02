@@ -15,7 +15,7 @@ class ErrorModule:
 
 	def getRecordSet(self, errors, dataset, col):
 		"""
-		The return value is a list of erroneous records, their indices
+		The return value is a list of erroneous records, their indices, and a detection rule
 		"""
 		raise NotImplemented("An error module must implement getRecordSet")
 

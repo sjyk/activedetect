@@ -4,11 +4,10 @@ are possibly erroneous.
 """
 import numpy as np
 from activedetect.loaders.type_inference import LoLTypeInference
-from StringSimilarityErrorModule import StringSimilarityErrorModule
 from QuantitativeErrorModule import QuantitativeErrorModule
-from SemanticErrorModule import SemanticErrorModule
-from CharSimilarityErrorModule import CharSimilarityErrorModule
+from PatternErrorFinder import PatternErrorFinder
 from PuncErrorModule import PuncErrorModule
+from gensim.models.word2vec import Word2Vec
 
 class ErrorDetector:
 
@@ -16,7 +15,10 @@ class ErrorDetector:
 				 dataset, 
 				 cols = None,
 				 modules = [],
-				 config =  []):	
+				 config =  [],
+				 #optional use word2vect
+				 use_word2vec=True,
+				 word2vec_config={'thresh':10}):	
 
 		if len(config) != len(modules):
 			raise ValueError("Config must be the same length as the modules list")
@@ -38,9 +40,18 @@ class ErrorDetector:
 
 		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
+		if use_word2vec:
+			self.word2vec = PatternErrorFinder(**word2vec_config)
+			self.use_word2vec = True
+		else:
+			self.word2vec = None
+			self.use_word2vec = False
+
 		self.all_errors = [[[] for x in range(len(self.types))] for y in range(len(dataset))] 
 		
 		self.error_list = []
+
+		self.rules = []
 
 		self.iterator = None
 
@@ -79,7 +90,9 @@ class ErrorDetector:
 			if col_type in d.availTypes():
 				vals = [r[col] for r in self.dataset]
 
-				error_dict[d.desc()] = d.getRecordSet(d.predict(vals)[0], self.dataset, col)
+				errors, indices, rules = d.predict(vals)
+				error_dict[d.desc()] = d.getRecordSet(errors, self.dataset, col)
+				self.rules.extend([(col, r) for r in rules])
 
 		return error_dict
 
@@ -113,26 +126,100 @@ class ErrorDetector:
 					if self.logger != None:
 						self.logger.logError(self.errorToDict((index, i)))
 
+
+		if self.use_word2vec:
+			records, indices, rules = self.word2vec.getRecordSet(self.dataset)
+			self.rules.extend([(-1, r) for r in rules])
+
+			for index in indices:
+				self.error_list.append((index, -1))
+			
+
 		self.iterator = self.error_list.__iter__()
 		
 		return self.all_errors
-
 	
+
+
 	#iterator interface to the error detector
 	def __iter__(self):
 		return self
 
 	def errorToDict(self, v):
-		return {'cell': v, 
+
+		if v[1] > 0:
+			return {'cell': v, 
 				'error_types':self.all_errors[v[0]][v[1]],
 				'cell_value': self.dataset[v[0]][v[1]],
 				'record_value': self.dataset[v[0]]}
+		else:
+			return {'Row': v[0], 
+					'error_types': 'Word2Vec Pattern Error',
+					'record_value': self.dataset[v[0]]}
 
 	#gets the next error
 	def next(self):
 		v = self.iterator.next()
 		return self.errorToDict(v)
 
+
+
+
+	#returns detection rules
+	####
+
+	def getAllRules(self):
+		return self.rules
+
+
+	def tryParse(self, num):
+		try:
+			return float(num)
+		except ValueError:
+			return np.inf
+
+
+	#returns detection function
+	def getDetectorFunction(self):
+
+		if self.use_word2vec:
+
+			w2v_rule = [r[1] for r in self.rules if r[1]['type']=='word2vec']
+
+			if len(w2v_rule) == 0:
+				raise ValueError("You need to run fit() first with use_word2vec=True")
+
+			lmodel = Word2Vec.load(w2v_rule[0]['model'])
+		else:
+			lmodel = None
+
+
+		def error_detector(row, rules, model):
+
+			for r in rules:
+
+				if r[1]['type'] == 'equality' and \
+				   row[r[0]] == r[1]['val']:
+
+					return True, r[0]
+				
+				elif model!= None and\
+					 r[1]['type'] == 'word2vec' and \
+					 r[1]['mean'] - model.score([row])[0] > r[1]['width']:
+
+					 return True, r[0]
+
+				elif r[1]['type'] == 'std':
+
+					v = self.tryParse(row[r[0]])
+
+					if np.abs(r[1]['mean'] - v) > r[1]['width'] or np.isinf(v):
+						return True, r[0]
+
+			return False, -1
+		
+		return lambda row: error_detector(row, self.rules, lmodel)
+					
 
 
 

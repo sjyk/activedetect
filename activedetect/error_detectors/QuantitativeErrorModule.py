@@ -33,7 +33,7 @@ class QuantitativeErrorModule(ErrorModule):
 				error.add(a)
 				incorpus.remove(a)
 
-		return list(error), list(incorpus)
+		return list(error), list(incorpus), [{'type':'std', 'mean': mean, 'width': self.thresh*std}]
 
 
 	def tryParse(self, num):

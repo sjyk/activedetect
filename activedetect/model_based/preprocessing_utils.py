@@ -35,16 +35,41 @@ def tryParseList(Y):
 #converts the labeled dataset into features and labels
 def featurize(features_dataset, types):
 	feature_list = []
+	transform_list = []
 
 	for i,t in enumerate(types):
 		col = [f[i] for f in features_dataset]
 
 		if t == "string" or t == "categorical" or t =="address":
 			vectorizer = CountVectorizer(min_df=1, token_pattern='\S+')
-			feature_list.append(vectorizer.fit_transform(col))
+			vectorizer.fit(col)
+			feature_list.append(vectorizer.transform(col))
+			###print 
+			transform_list.append(vectorizer)
 		else:
 			vectorizer = FunctionTransformer(tryParse)
-			feature_list.append(scipy.sparse.csr_matrix(vectorizer.fit_transform(col)).T)
+			vectorizer.fit(col)
+			feature_list.append(scipy.sparse.csr_matrix(vectorizer.transform(col)).T)
+			transform_list.append(vectorizer)
+
+	features = scipy.sparse.hstack(feature_list).tocsr()
+	return features, transform_list
+
+#converts the labeled dataset into features and labels
+def featurizeFromList(features_dataset, types, tlist):
+	feature_list = []
+	transform_list = []
+
+	for i,t in enumerate(types):
+		col = [f[i] for f in features_dataset]
+
+		if t == "string" or t == "categorical" or t =="address":
+			vectorizer = tlist[i]
+			feature_list.append(vectorizer.transform(col))
+		else:
+			vectorizer = tlist[i]
+			#print scipy.sparse.csr_matrix(vectorizer.transform(col)).T
+			feature_list.append(scipy.sparse.csr_matrix(vectorizer.transform(col)).T)
 
 	features = scipy.sparse.hstack(feature_list).tocsr()
 	return features

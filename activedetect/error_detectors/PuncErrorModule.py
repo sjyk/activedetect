@@ -31,7 +31,7 @@ class PuncErrorModule(ErrorModule):
 				error.add(s)
 				incorpus.remove(s)
 
-		return list(error), list(incorpus)
+		return list(error), list(incorpus), [{'type':'equality', 'val': e} for e in error]
 
 
 	"""
