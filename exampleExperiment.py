@@ -19,6 +19,7 @@ features = [l[0:-1] for l in loadedData]
 labels = [1.0*(l[-1]==' <=50K') for l in loadedData]
 
 #run the experiment, results are stored in uscensus.log
+#features, label, sklearn model, name
 e = Experiment(features, labels, RandomForestClassifier(), "uscensus")
 e.runAllAccuracy()
 
