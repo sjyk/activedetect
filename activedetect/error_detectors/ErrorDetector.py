@@ -136,7 +136,7 @@ class ErrorDetector:
 
 
 		if self.logger != None:
-			estring = [len(set([s[0] for s in self.error_list])), str(len(self.dataset))]
+			estring = [str(self.modules), len(set([s[0] for s in self.error_list])), str(len(self.dataset))]
 			self.logger.logError(estring)
 			
 
