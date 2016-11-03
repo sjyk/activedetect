@@ -206,7 +206,7 @@ class ErrorDetector:
 				elif model!= None and\
 					 r[1]['type'] == 'word2vec' and \
 					 r[1]['mean'] - model.score([row])[0] > r[1]['width']:
-
+				
 					 return True, r[0]
 
 				elif r[1]['type'] == 'std':
