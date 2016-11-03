@@ -33,3 +33,9 @@ class Logging:
 		Given a dict input to the detector
 		"""
 		raise NotImplemented("Loggers must implement logConfig")
+
+	def logResult(self, result):
+		"""
+		Given a dict input to the detector
+		"""
+		raise NotImplemented("Loggers must implement logConfig")

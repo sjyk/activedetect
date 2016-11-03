@@ -15,7 +15,8 @@ class BoostClean(object):
                  config,
                  base_model,
                  features,
-                 labels):
+                 labels,
+                 logging):
 
         self.modules = modules
         self.config = config
@@ -30,6 +31,8 @@ class BoostClean(object):
         self.ensemble = []
 
         self.weights = None
+
+        self.logging = logging
 
 
     def runRound(self, avail_modules, avail_config, selected):
@@ -56,7 +59,7 @@ class BoostClean(object):
                 mlist = [module]
                 clist = [avail_config[i]]
 
-                detector = ErrorDetector(self.features)
+                detector = ErrorDetector(self.features,modules=mlist, config=clist)
                 detector.fit()
                 dfn = detector.getDetectorFunction()
 
@@ -104,8 +107,7 @@ class BoostClean(object):
 
         self.weights = self.weights / np.sum(self.weights)
 
-
-    def boost(self, j):
+    def run(self, j=1):
 
         modules = copy.copy(self.modules)
         config  = copy.copy(self.config)
@@ -121,7 +123,7 @@ class BoostClean(object):
 
             selected.add(argmax[1])
 
-            print self.evaluateEnsembleAccuracy()
+            self.logging.logResult(["acc_boostclean", roundNo, self.evaluateEnsembleAccuracy()])
 
         return self.ensemble
 
