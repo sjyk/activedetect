@@ -153,6 +153,8 @@ class BestSingle(object):
                 argmax = arg
                 maxv = cur
 
+        self.logging.logResult(["cleaner_bs", roundNo, str(self.modules[argmax[1][0]])])
+
         return maxv, argmax
 
 
@@ -227,6 +229,8 @@ class WorstSingle(object):
             if minv >= cur:
                 argmin = arg
                 minv = cur
+
+        self.logging.logResult(["cleaner_ws", roundNo, str(self.modules[argmin[1][0]])])
 
         return minv, argmin
 

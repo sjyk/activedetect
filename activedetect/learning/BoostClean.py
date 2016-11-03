@@ -60,6 +60,7 @@ class BoostClean(object):
                 clist = [avail_config[i]]
 
                 detector = ErrorDetector(self.features,modules=mlist, config=clist)
+                detector.addLogger(self.logging)
                 detector.fit()
                 dfn = detector.getDetectorFunction()
 
@@ -122,6 +123,8 @@ class BoostClean(object):
             self.updateWeights(argmax[0][1], argmax[0][2], alpha)
 
             selected.add(argmax[1])
+
+            self.logging.logResult(["cleaner_boostclean", roundNo, str(self.modules[argmax[1][0]])])
 
             self.logging.logResult(["acc_boostclean", roundNo, self.evaluateEnsembleAccuracy()])
 
