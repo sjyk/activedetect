@@ -102,10 +102,10 @@ class ErrorDetector:
 	def fit(self):
 		
 		#log schema, config, file type
-		#if self.logger != None:
-		#	self.logger.logSchema(self.types)
-		#	self.logger.logFileType(len(self.dataset), len(self.types))
-		#	self.logger.logConfig(self.modules, self.config)
+		if self.logger != None:
+			self.logger.logSchema(self.types)
+			self.logger.logFileType(len(self.dataset), len(self.types))
+			self.logger.logConfig(self.modules, self.config)
 
 		for i,t in enumerate(self.types):
 
@@ -123,8 +123,11 @@ class ErrorDetector:
 					self.all_errors[index][i].append(k)
 					self.error_list.append((index, i))
 					
-					#if self.logger != None:
-					#	self.logger.logError(self.errorToDict((index, i)))
+					if self.logger != None:
+						edict = self.errorToDict((index, i))
+						edict['cell_value'] = ''
+						edict['record_value'] = ''
+						self.logger.logError(edict)
 
 
 		if self.use_word2vec:
