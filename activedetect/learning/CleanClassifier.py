@@ -148,74 +148,57 @@ class CleanClassifier(object):
     def predict(self, test_features):
         test_features_copy = copy.copy(test_features)
 
-        predictions = []
+        predictions = {}
 
         for i,v in enumerate(test_features_copy):
+
             error, col = self.detector(v)
 
             if error and col == -1:
 
                 if self.test_action == 'default':
-                    predictions.append(self.default_pred)
-                else:
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
+                    predictions[i] = self.default_pred
 
             elif error and self.types[col] == 'numerical':
 
                 if self.test_action == 'impute_mode':
                     test_features_copy[i][col] = str(self.stats[col]['mode'])
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.test_action == 'impute_mean':
                     test_features_copy[i][col] = str(self.stats[col]['mean'])
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.test_action == 'impute_median':
                     test_features_copy[i][col] = str(self.stats[col]['median'])
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
-                else :
-                    predictions.append(self.default_pred)
+                else:
+                    predictions[i] = self.default_pred
 
             elif error and self.types[col] == 'categorical':
 
                 if self.train_action == 'impute_mode':
                     test_features_copy[i][col] = str(self.stats[col]['mode'])
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.train_action == 'impute_mean':
                     test_features_copy[i][col] = ''
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.train_action == 'impute_median':
                     test_features_copy[i][col] = str(self.stats[col]['mode'])
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 else:
-                    predictions.append(self.default_pred)
+                    predictions[i] = self.default_pred
 
             elif error:
 
                 if self.train_action == 'impute_mode':
                     test_features_copy[i][col] = ''
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.train_action == 'impute_mean':
                     test_features_copy[i][col] = ''
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 elif self.train_action == 'impute_median':
                     test_features_copy[i][col] = ''
-                    X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                    predictions.append(self.model.predict(X)[0])
                 else:
-                    predictions.append(self.default_pred)
-            else:
-                 X = featurizeFromList([test_features_copy[i]], self.types, self.transforms)
-                 predictions.append(self.model.predict(X)[0])
+                    predictions[i] = self.default_pred
 
-        return predictions
+        X = featurizeFromList(test_features_copy, self.types, self.transforms)
+        predictions_nom = self.model.predict(X)
+
+        for k in predictions:
+            predictions_nom[k] = predictions[k]
+
+        return predictions_nom
 
 
 

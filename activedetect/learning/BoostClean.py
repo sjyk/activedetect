@@ -35,7 +35,7 @@ class BoostClean(object):
         self.logging = logging
 
 
-    def runRound(self, avail_modules, avail_config, selected):
+    def runRound(self, avail_modules, avail_config, selected, materialized_cache):
 
         trial = {}
 
@@ -70,8 +70,13 @@ class BoostClean(object):
                         if (i, tr, te) in selected:
                             continue
 
+                        if (i, tr, te) in materialized_cache:
+                            trial[(i, tr, te)] = materialized_cache[(i, tr, te)]
+                            continue
+
                         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
                         cleanClassifier, ypred, ytrue = clf.run(dfn, tr, te)
+                        materialized_cache[(i, tr, te)] = (cleanClassifier, ypred, ytrue)
                         trial[(i, tr, te)] = (cleanClassifier, ypred, ytrue)
 
                         #if the weights are none initialize
@@ -91,7 +96,7 @@ class BoostClean(object):
                 argmax = arg
                 maxv = cur
 
-        return maxv, argmax
+        return maxv, argmax, materialized_cache
 
 
     def calculateStep(self, ypred, yactual):
@@ -113,9 +118,11 @@ class BoostClean(object):
         modules = copy.copy(self.modules)
         config  = copy.copy(self.config)
         selected = set()
+        cache = {}
         
         for roundNo in range(0,j):
-            acc, argmax = self.runRound(self.modules, self.config, selected)
+            #print config
+            acc, argmax, cache = self.runRound(modules, config, selected, cache)
             alpha = self.calculateStep(argmax[0][1], argmax[0][2])
 
             self.ensemble.append((argmax[0][0], alpha))

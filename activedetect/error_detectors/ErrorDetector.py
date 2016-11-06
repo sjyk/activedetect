@@ -187,8 +187,11 @@ class ErrorDetector:
 			return np.inf
 
 
-	#returns detection function
-	def getDetectorFunction(self):
+
+
+
+	#returns detection function that can be applied online
+	def _getDetectorFunctionOnline(self):
 
 		if self.use_word2vec:
 
@@ -227,6 +230,33 @@ class ErrorDetector:
 			return False, -1
 		
 		return lambda row: error_detector(row, self.rules, lmodel)
+
+
+	#returns detection function that is only for optimization
+	#builds an index over the detected errors.
+	def _getDetectorFunctionIndexed(self):
+
+		inverted_index = {}
+		for error in self.error_list:
+			inverted_index[tuple(self.dataset[error[0]])] = error[1] 
+
+
+		def error_detector(row, index):
+
+			try:
+				return True,index[tuple(row)]
+			except:
+				return False, -1
+		
+		return lambda row: error_detector(row, inverted_index)
+
+
+	#applies the helper methods to get a detector function
+	def getDetectorFunction(self, indexed=True):
+		if indexed:
+			return self._getDetectorFunctionIndexed()
+		else:
+			return self._getDetectorFunctionOnline()
 					
 
 
