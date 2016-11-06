@@ -22,7 +22,7 @@ class BoostClean(object):
         self.config = config
 
         self.modules.append("None")
-        self.config.append([{}])
+        self.config.append({})
 
         self.base_model = base_model
         self.features = features
@@ -121,7 +121,6 @@ class BoostClean(object):
         cache = {}
         
         for roundNo in range(0,j):
-            #print config
             acc, argmax, cache = self.runRound(modules, config, selected, cache)
             alpha = self.calculateStep(argmax[0][1], argmax[0][2])
 

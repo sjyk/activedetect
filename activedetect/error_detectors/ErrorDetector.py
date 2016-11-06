@@ -38,6 +38,7 @@ class ErrorDetector:
 
 		#print self.types
 
+		print config
 		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
 		if use_word2vec:
