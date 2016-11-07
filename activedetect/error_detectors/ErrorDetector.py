@@ -18,7 +18,7 @@ class ErrorDetector:
 				 config =  [],
 				 #optional use word2vect
 				 use_word2vec=True,
-				 word2vec_config={'thresh':10}):	
+				 word2vec_config={'thresh':5}):	
 
 		if len(config) != len(modules):
 			raise ValueError("Config must be the same length as the modules list")
@@ -38,7 +38,7 @@ class ErrorDetector:
 
 		#print self.types
 
-		print config
+		print config, modules
 		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
 		if use_word2vec:

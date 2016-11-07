@@ -10,7 +10,7 @@ Example Experiment Script
 #Loads the first 100 lines of the dataset
 #loaded data is a list of lists [ [r1], [r2],...,[r100]]
 c = CSVLoader()
-loadedData = c.loadFile('datasets/adult.data')[:1000]
+loadedData = c.loadFile('datasets/adult.data')[:10000]
 
 #all but the last column are features
 features = [l[0:-1] for l in loadedData]

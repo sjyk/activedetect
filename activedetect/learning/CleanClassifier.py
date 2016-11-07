@@ -172,22 +172,22 @@ class CleanClassifier(object):
 
             elif error and self.types[col] == 'categorical':
 
-                if self.train_action == 'impute_mode':
+                if self.test_action == 'impute_mode':
                     test_features_copy[i][col] = str(self.stats[col]['mode'])
-                elif self.train_action == 'impute_mean':
+                elif self.test_action  == 'impute_mean':
                     test_features_copy[i][col] = ''
-                elif self.train_action == 'impute_median':
+                elif self.test_action  == 'impute_median':
                     test_features_copy[i][col] = str(self.stats[col]['mode'])
                 else:
                     predictions[i] = self.default_pred
 
             elif error:
 
-                if self.train_action == 'impute_mode':
+                if self.test_action  == 'impute_mode':
                     test_features_copy[i][col] = ''
-                elif self.train_action == 'impute_mean':
+                elif self.test_action  == 'impute_mean':
                     test_features_copy[i][col] = ''
-                elif self.train_action == 'impute_median':
+                elif self.test_action  == 'impute_median':
                     test_features_copy[i][col] = ''
                 else:
                     predictions[i] = self.default_pred

@@ -55,6 +55,7 @@ def featurize(features_dataset, types):
 	features = scipy.sparse.hstack(feature_list).tocsr()
 	return features, transform_list
 
+
 #converts the labeled dataset into features and labels
 def featurizeFromList(features_dataset, types, tlist):
 	feature_list = []
@@ -73,3 +74,9 @@ def featurizeFromList(features_dataset, types, tlist):
 
 	features = scipy.sparse.hstack(feature_list).tocsr()
 	return features
+
+def acc_score(ytrue, ypred, roundNo):
+	t = len([i for i,v in enumerate(ytrue)])
+	expweight = np.sum([np.exp(-i) for i in range(roundNo+1)])
+	tn = np.sum([1.0/(t*(expweight)) for i,v in enumerate(ytrue) if ytrue[i] != ypred[i]])	
+	return (1.0-tn)
