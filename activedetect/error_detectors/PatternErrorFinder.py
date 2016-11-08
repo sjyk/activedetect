@@ -9,7 +9,6 @@ import os.path
 class PatternErrorFinder(object):
 
 	def __init__(self, thresh=3.5, model_savef='/tmp/model.bin'):
-
 		self.thresh = thresh
 		self.model_savef = model_savef
 
@@ -31,6 +30,7 @@ class PatternErrorFinder(object):
 		indices = []
 
 		for i,v in enumerate(vals):
+			print v, std, self.thresh, mean
 			if mean-v > self.thresh*std:
 				erecords.append(dataset[i])
 				indices.append(i)

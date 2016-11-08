@@ -149,6 +149,12 @@ def get_violations(X, unsafe, constraints):
 
 	return constraint_violations
 
+def normalize(y1, y2, N, w):
+	expweight = int(np.sum([np.exp(-i) for i in range(1,w+1)])*len(y2))
+	y1[0:expweight] = y2[0:expweight]
+	N[0:expweight] = y2[0:expweight]
+	return y1, y2, N
+
 #sample edits to rectify the constraint violations
 def get_safeset_violations( dataset, 
 							types,

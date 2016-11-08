@@ -195,10 +195,21 @@ class CleanClassifier(object):
         X = featurizeFromList(test_features_copy, self.types, self.transforms)
         predictions_nom = self.model.predict(X)
 
+        try:
+            scores = self.model.predict_proba(X)[:,1]
+        except:
+            scores = predictions_nom
+
+
         for k in predictions:
             predictions_nom[k] = predictions[k]
 
-        return predictions_nom
+            if predictions[k] == 1:
+                scores[k] = 1.0
+            else:
+                scores[k] = 0
+
+        return predictions_nom, scores
 
 
 

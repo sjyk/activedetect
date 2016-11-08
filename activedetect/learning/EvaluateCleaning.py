@@ -29,7 +29,7 @@ class EvaluateCleaning(object):
         types = LoLTypeInference().getDataTypes(self.train_features)
         clf = CleanClassifier(self.model, detector, self.train_features, self.train_labels, types, training_action, test_action)
         clf.fit()
-        ypred = clf.predict(self.test_features)
-        return clf, ypred, self.test_labels
+        ypred, yscores = clf.predict(self.test_features)
+        return clf, ypred, self.test_labels, yscores
 
 

@@ -5,9 +5,9 @@ import copy
 from activedetect.error_detectors.ErrorDetector import ErrorDetector
 from EvaluateCleaning import EvaluateCleaning
 from CleanClassifier import CleanClassifier
-from sklearn.metrics import accuracy_score, f1_score
 from activedetect.error_detectors.PuncErrorModule import PuncErrorModule
 from activedetect.error_detectors.QuantitativeErrorModule import QuantitativeErrorModule
+from activedetect.model_based.preprocessing_utils import *
 import numpy as np
 
 class NoClean(object):
@@ -27,8 +27,10 @@ class NoClean(object):
     def run(self):
         dfn = lambda row: (False, -1)
         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-        cleanClassifier, ypred, ytrue = clf.run(dfn, 'impute_mean', 'impute_mean')
-        self.logging.logResult(["acc_noclean", accuracy_score(ytrue, ypred)])
+        cleanClassifier, ypred, ytrue, yscores = clf.run(dfn, 'impute_mean', 'impute_mean')
+        print "#####"
+        print yscores
+        self.logging.logResult(["acc_noclean", get_acc_scores(ytrue, ypred, yscores)])
 
 
 class ICClean(object):
@@ -52,8 +54,8 @@ class ICClean(object):
         detector.fit()
         dfn = detector.getDetectorFunction()
         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-        cleanClassifier, ypred, ytrue = clf.run(dfn, 'impute_mean', 'impute_mean')
-        self.logging.logResult(["acc_icclean", accuracy_score(ytrue, ypred)])
+        cleanClassifier, ypred, ytrue, yscores = clf.run(dfn, 'impute_mean', 'impute_mean')
+        self.logging.logResult(["acc_icclean", get_acc_scores(ytrue, ypred, yscores)])
 
 
 class QClean(object):
@@ -77,8 +79,8 @@ class QClean(object):
         detector.fit()
         dfn = detector.getDetectorFunction()
         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-        cleanClassifier, ypred, ytrue = clf.run(dfn, 'impute_mean', 'impute_mean')
-        self.logging.logResult(["acc_qclean", accuracy_score(ytrue, ypred)])
+        cleanClassifier, ypred, ytrue, yscores = clf.run(dfn, 'impute_mean', 'impute_mean')
+        self.logging.logResult(["acc_qclean", get_acc_scores(ytrue, ypred, yscores)])
 
 
 class BestSingle(object):
@@ -105,7 +107,7 @@ class BestSingle(object):
         
         v, i = self.runRound(mlist, clist, set())
 
-        self.logging.logResult(["acc_bs", v])
+        self.logging.logResult(["acc_bs", get_acc_scores(i[0][2], i[0][1], i[0][3])])
 
     def runRound(self, avail_modules, avail_config, selected):
 
@@ -119,8 +121,8 @@ class BestSingle(object):
 
                 dfn = lambda row: (False, -1)
                 clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-                cleanClassifier, ypred, ytrue = clf.run(dfn, 'impute_mean', 'impute_mean')
-                trial[(i, 'impute_mean', 'impute_mean')] = (cleanClassifier, ypred, ytrue)
+                cleanClassifier, ypred, ytrue,yscores = clf.run(dfn, 'impute_mean', 'impute_mean')
+                trial[(i, 'impute_mean', 'impute_mean')] = (cleanClassifier, ypred, ytrue, yscores)
             
             else:
                 mlist = [module]
@@ -137,8 +139,8 @@ class BestSingle(object):
                             continue
 
                         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-                        cleanClassifier, ypred, ytrue = clf.run(dfn, tr, te)
-                        trial[(i, tr, te)] = (cleanClassifier, ypred, ytrue)
+                        cleanClassifier, ypred, ytrue,yscores = clf.run(dfn, tr, te)
+                        trial[(i, tr, te)] = (cleanClassifier, ypred, ytrue, yscores)
 
         
         argmax = None
@@ -182,7 +184,7 @@ class WorstSingle(object):
         
         v, i = self.runRound(mlist, clist, set())
 
-        self.logging.logResult(["acc_ws", v])
+        self.logging.logResult(["acc_ws", get_acc_scores(i[0][2], i[0][1], i[0][3])])
 
     def runRound(self, avail_modules, avail_config, selected):
 
@@ -196,8 +198,8 @@ class WorstSingle(object):
 
                 dfn = lambda row: (False, -1)
                 clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-                cleanClassifier, ypred, ytrue = clf.run(dfn, 'impute_mean', 'impute_mean')
-                trial[(i, 'impute_mean', 'impute_mean')] = (cleanClassifier, ypred, ytrue)
+                cleanClassifier, ypred, ytrue,yscores = clf.run(dfn, 'impute_mean', 'impute_mean')
+                trial[(i, 'impute_mean', 'impute_mean')] = (cleanClassifier, ypred, ytrue, yscores)
             
             else:
                 mlist = [module]
@@ -214,8 +216,8 @@ class WorstSingle(object):
                             continue
 
                         clf = EvaluateCleaning(self.features, self.labels, copy.copy(self.base_model))
-                        cleanClassifier, ypred, ytrue = clf.run(dfn, tr, te)
-                        trial[(i, tr, te)] = (cleanClassifier, ypred, ytrue)
+                        cleanClassifier, ypred, ytrue, yscores = clf.run(dfn, tr, te)
+                        trial[(i, tr, te)] = (cleanClassifier, ypred, ytrue, yscores)
 
         
         argmin = None

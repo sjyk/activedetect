@@ -3,6 +3,7 @@ import csv
 import numpy as np
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 import scipy
 import unicodedata
 
@@ -55,7 +56,6 @@ def featurize(features_dataset, types):
 	features = scipy.sparse.hstack(feature_list).tocsr()
 	return features, transform_list
 
-
 #converts the labeled dataset into features and labels
 def featurizeFromList(features_dataset, types, tlist):
 	feature_list = []
@@ -75,8 +75,13 @@ def featurizeFromList(features_dataset, types, tlist):
 	features = scipy.sparse.hstack(feature_list).tocsr()
 	return features
 
-def acc_score(ytrue, ypred, roundNo):
-	t = len([i for i,v in enumerate(ytrue)])
-	expweight = np.sum([np.exp(-i) for i in range(roundNo+1)])
-	tn = np.sum([1.0/(t*(expweight)) for i,v in enumerate(ytrue) if ytrue[i] != ypred[i]])	
-	return (1.0-tn)
+def get_acc_scores(ytrue, ypred, yscores=None):
+	
+	if yscores == None:
+		yscores = ypred
+	
+	return [accuracy_score(ytrue, ypred), f1_score(ytrue, ypred), roc_auc_score(ytrue, yscores, 'weighted')]
+
+
+
+

@@ -10,7 +10,7 @@ Example Experiment Script
 #Loads the first 100 lines of the dataset
 #loaded data is a list of lists [ [r1], [r2],...,[r100]]
 c = CSVLoader()
-loadedData = c.loadFile('datasets/adult.data')[:10000]
+loadedData = c.loadFile('datasets/adult.data')[:1000]
 
 #all but the last column are features
 features = [l[0:-1] for l in loadedData]
@@ -22,4 +22,5 @@ labels = [1.0*(l[-1]==' <=50K') for l in loadedData]
 #features, label, sklearn model, name
 e = Experiment(features, labels, RandomForestClassifier(), "uscensus")
 e.runAllAccuracy()
+
 
