@@ -30,7 +30,7 @@ class PatternErrorFinder(object):
 		indices = []
 
 		for i,v in enumerate(vals):
-			print v, std, self.thresh, mean
+			#print v, std, self.thresh, mean
 			if mean-v > self.thresh*std:
 				erecords.append(dataset[i])
 				indices.append(i)

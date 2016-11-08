@@ -35,6 +35,7 @@ class LoLTypeInference:
 			#	type_array.append('address')
 			if self.__is_num(data, i):
 				type_array.append('numerical')
+				#print i, [d[i] for d in data]
 			elif self.__is_cat(data, i):
 				type_array.append('categorical')
 			else:
@@ -52,7 +53,7 @@ class LoLTypeInference:
 			try:
 				float(datum[col].strip())
 				float_count = float_count + 1.0
-			except ValueError:
+			except:
 				pass
 
 		return (float_count/len(data) > self.num_thresh)

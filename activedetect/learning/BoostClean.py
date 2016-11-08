@@ -179,14 +179,17 @@ class BoostClean(object):
     def predict(self, X):
 
         base = np.asarray(np.zeros((len(X),1))).reshape(-1)
+        scores = np.asarray(np.zeros((len(X),1))).reshape(-1)
 
         for e in self.ensemble:
             base[:] = base[:] + e[1]*np.array([y*2-1 for y in e[0].predict(X)[0]])
 
-        base[base >= 0] = base[base >= 0]/np.max(base[base >= 0])
-        base[base < 0] = base[base < 0]/np.abs(np.min(base[base < 0]))
+        all_a = [e[1] for e in self.ensemble] 
+        total = np.sum(all_a)
+        normalized_a = all_a / np.sum(all_a)
 
-        scores = (base + 1)/2
+        for i,e in enumerate(self.ensemble):
+            scores[:] = scores[:] + normalized_a[i]*np.array([y*2-1 for y in e[0].predict(X)[1]])
 
         return (base >= 0), scores
 

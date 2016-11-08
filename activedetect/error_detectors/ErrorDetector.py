@@ -38,7 +38,7 @@ class ErrorDetector:
 
 		#print self.types
 
-		print config, modules
+		#print config, modules
 		self.modules = [d(**config[i]) for i, d in enumerate(modules)] 
 
 		if use_word2vec:
@@ -156,7 +156,9 @@ class ErrorDetector:
 
 	def errorToDict(self, v):
 
-		if v[1] > 0:
+		print self.dataset[v[0]]
+
+		if v[1] >= 0:
 			return {'cell': v, 
 				'error_types':self.all_errors[v[0]][v[1]],
 				'cell_value': self.dataset[v[0]][v[1]],
