@@ -36,6 +36,7 @@ wget https://raw.githubusercontent.com/sjyk/activedetect/master/datasets/adult-r
 
 cd ..
 mkdir corpora
+cd corpora
 https://raw.githubusercontent.com/sjyk/activedetect/master/corpora/text8
 ```
 
