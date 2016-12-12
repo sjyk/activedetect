@@ -36,7 +36,7 @@ wget https://raw.githubusercontent.com/sjyk/activedetect/master/datasets/adult-r
 
 cd ..
 mkdir corpora
-https://raw.githubusercontent.com/sjyk/activedetect/master/corpora/text8
+wget https://raw.githubusercontent.com/sjyk/activedetect/master/corpora/text8
 ```
 
 Move up one directory (to make the example paths work out)
